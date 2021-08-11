@@ -6,6 +6,7 @@ var direction = "";
 var snakeDirection = "up";
 var activePoint = null;
 var speed = 250;
+var isDirectionApplied = true;
 
 function run() {
     playground = document.getElementById("playground");
@@ -15,17 +16,20 @@ function run() {
 }
 
 function changeDirection(event) {
-    if (event.key === "ArrowDown" && direction !== "up" && direction !== "" && snakeDirection !== "up")
-        direction = "down";
-    else if (event.key === "ArrowUp" && direction !== "down" && snakeDirection !== "down")
-        direction = "up";
-    else if (event.key === "ArrowLeft" && direction !== "right" && snakeDirection !== "right")
-        direction = "left";
-    else if (event.key === "ArrowRight" && direction !== "left" && snakeDirection !== "left")
-        direction = "right";
-    if (interval === null && direction !== "") {
-        interval = window.setInterval(move, speed);
-        document.getElementById("message").style.display = "none";
+    if (isDirectionApplied) {
+        if (event.key === "ArrowDown" && direction !== "up" && direction !== "" && snakeDirection !== "up")
+            direction = "down";
+        else if (event.key === "ArrowUp" && direction !== "down" && snakeDirection !== "down")
+            direction = "up";
+        else if (event.key === "ArrowLeft" && direction !== "right" && snakeDirection !== "right")
+            direction = "left";
+        else if (event.key === "ArrowRight" && direction !== "left" && snakeDirection !== "left")
+            direction = "right";
+        if (interval === null && direction !== "") {
+            interval = window.setInterval(move, speed);
+            document.getElementById("message").style.display = "none";
+        }
+        isDirectionApplied = false;
     }
 }
 
@@ -36,6 +40,7 @@ function speedUp() {
 }
 
 function move() {
+    isDirectionApplied = true;
     var cordObj = snakeArray[0];
     var head = document.getElementById(cordObj.id);
     var lastX = cordObj.x;
@@ -84,7 +89,7 @@ function move() {
 
 function initSnake() {
     for (var i = 0; i < 5; i++) {
-        var newTail = {id: "part" + (i + 1), x: 17, y: 17 + i};
+        var newTail = { id: "part" + (i + 1), x: 17, y: 17 + i };
         generateTail(newTail);
         snakeArray.push(newTail);
     }
@@ -121,7 +126,7 @@ function getTail(x, y) {
 function checkPoint(headObj) {
     if (activePoint)
         if (activePoint.x === headObj.x && activePoint.y === headObj.y) {
-            collectedPoints.push({id: "part" + (snakeArray.length + 1 + collectedPoints.length), x: activePoint.x, y: activePoint.y});
+            collectedPoints.push({ id: "part" + (snakeArray.length + 1 + collectedPoints.length), x: activePoint.x, y: activePoint.y });
             document.getElementById(activePoint.id).remove();
             scoreUp();
             activePoint = null;
@@ -185,7 +190,7 @@ function randomPoint() {
         if (item.x === x && item.y === y)
             return randomPoint();
     }
-    return {id: "point", x: x, y: y};
+    return { id: "point", x: x, y: y };
 }
 
 function randomInt() {
@@ -202,5 +207,6 @@ function restartGame() {
     activePoint = null;
     speed = 250;
     playground.innerHTML = "";
+    isDirectionApplied = true;
     initSnake();
 }
